@@ -11,6 +11,7 @@ import threading
 
 from pythonosc import dispatcher
 from pythonosc import osc_server
+from pythonosc import udp_client
 
 from strandtest import *
 from LeshJson import *
@@ -30,14 +31,17 @@ def LightWS(_dataList):
 def LightDMX(_dataList):
     global DataWs  
 
-def handler_Instruction(unused_addr, args,DelayTime):
-    """
+def handler_Instruction(unused_addr, args,_value):
+    
     print("Instruction Start")
+    print("Value="+str(_value))
     print("Instruction End")
-    """
+    
     global TestNum
     TestNum = 255
-
+    
+    client = udp_client.SimpleUDPClient("172.20.10.4", 2349)
+    client.send_message("/Response",112233)
    
 def job():
   #for i in range(5):
@@ -79,9 +83,10 @@ def print_compute_handler(unused_addr, args, volume):
   except ValueError: pass
 
 if __name__ == "__main__":
+  myLocalIP = GetLocalIp()
   parser = argparse.ArgumentParser()
   parser.add_argument("--ip",
-      default="172.20.10.2", help="The ip to listen on.")
+      default=myLocalIP, help="The ip to listen on.")
   parser.add_argument("--port",
       type=int, default=2346, help="The port to listen on.")
   args = parser.parse_args()
