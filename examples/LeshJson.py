@@ -2,7 +2,7 @@ import json
 import socket
 
 def ReadJsonFile():
-    input_file = open ('config/test01.json')
+    input_file = open ('config/StationSetup.json')
     json_Data = json.load(input_file)
     print("ProjectName:" +json_Data['ProjectName'])
     json_array = json_Data['MyStations']
@@ -51,4 +51,5 @@ def GetLocalIp():
     s.close()
     return MyLocalIp
 
-    
+def GetLocalOscPort(): 
+    return 2346

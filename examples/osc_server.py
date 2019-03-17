@@ -31,24 +31,35 @@ def LightWS(_dataList):
 def LightDMX(_dataList):
     global DataWs  
 
-def handler_Instruction(unused_addr, args,_value):
-    
-    print("Instruction Start")
-    print("Value="+str(_value))
-    print("Instruction End")
-    
+def handler_Instruction(_unusedAddr, args,_commandType,_value1,_value2):
     global TestNum
-    TestNum = 255
+    print("aaa")
+    print("_unusedAddr="+_unusedAddr)
     
-    client = udp_client.SimpleUDPClient("172.20.10.4", 2349)
-    client.send_message("/Response",112233)
+    #for _arg in args:
+    #    print("_arg="+_arg)
+        
+    print("_commandType="+_commandType)
+    print("_value1="+_value1)
+    print("_value2="+_value2)
+
+    if(_commandType == "SYNC_JSON"):
+        TestNum = 0
+        
+    if(_commandType == "CHECK_OSC"):
+        client = udp_client.SimpleUDPClient(_value1, int(_value2))
+        list1 = [GetLocalIp(),GetLocalOscPort()]
+        client.send_message("/Response",list1)
+        
+    if(_commandType == "BREATHING_LIGHT"):   
+        TestNum = int(_value1)
    
 def job():
   #for i in range(5):
   global TestNum
   while True:
-    if(TestNum > 0):
-        for j in range(8):
+    if(TestNum >= 0):
+        for j in range(strip.numPixels()):
             strip.setPixelColor(j,Color(TestNum,TestNum,TestNum))
         #print("Child thread:", TestNum)
         strip.show()
@@ -84,18 +95,20 @@ def print_compute_handler(unused_addr, args, volume):
 
 if __name__ == "__main__":
   myLocalIP = GetLocalIp()
+  myLocalOscPort = GetLocalOscPort()
+  
   parser = argparse.ArgumentParser()
   parser.add_argument("--ip",
       default=myLocalIP, help="The ip to listen on.")
   parser.add_argument("--port",
-      type=int, default=2346, help="The port to listen on.")
+      type=int, default=myLocalOscPort, help="The port to listen on.")
   args = parser.parse_args()
 
   #10.1.1.6
   
   dispatcher = dispatcher.Dispatcher()
   dispatcher.map("/MatrixVelocity", handler_MatrixVelocity,"PrintValueAAA")
-  dispatcher.map("/Instruction", handler_Instruction,"test")
+  dispatcher.map("/Instruction", handler_Instruction,"test1","test2")
   
   #initled()
   #opt_parse()
