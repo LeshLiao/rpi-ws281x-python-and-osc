@@ -43,8 +43,9 @@ def handler_Instruction(_unusedAddr, args,_commandType,_value1,_value2):
     print("_value1="+_value1)
     print("_value2="+_value2)
 
-    if(_commandType == "SYNC_JSON"):
-        TestNum = 0
+    if(_commandType == "RELOAD_JSON"):
+        ReadJsonFile()
+        print("RELOAD_JSON")
         
     if(_commandType == "CHECK_OSC"):
         client = udp_client.SimpleUDPClient(_value1, int(_value2))

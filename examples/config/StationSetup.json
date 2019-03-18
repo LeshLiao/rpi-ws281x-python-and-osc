@@ -24,7 +24,7 @@
       "Port": 2346,
       "Titles":"Input:[Note,Tag],OutputParam:[Begin,End]",
 	  "Rules": [
- 
+        {"Tag":0,"Input":36,"OutputType":"WS281X","OutputParam":[0,1]},
         {"Tag":1,"Input":37,"OutputType":"WS281X","OutputParam":[1,2]}, 
         {"Tag":2,"Input":38,"OutputType":"WS281X","OutputParam":[2,3]},   
         {"Tag":3,"Input":39,"OutputType":"WS281X","OutputParam":[3,4]},
@@ -40,9 +40,9 @@
 		{"Tag":12,"Input":43,"OutputType":"WS281X","OutputParam":[12,13]},
 		{"Tag":13,"Input":42,"OutputType":"WS281X","OutputParam":[13,14]},
 		{"Tag":14,"Input":41,"OutputType":"WS281X","OutputParam":[14,15]},
+		{"Tag":15,"Input":40,"OutputType":"WS281X","OutputParam":[15,16]},
 		
-		
-		
+		{"Tag":16,"Input":44,"OutputType":"WS281X","OutputParam":[16,17]},
 		{"Tag":17,"Input":45,"OutputType":"WS281X","OutputParam":[17,18]},
 		{"Tag":18,"Input":46,"OutputType":"WS281X","OutputParam":[18,19]},
 		{"Tag":19,"Input":47,"OutputType":"WS281X","OutputParam":[19,20]},
@@ -58,10 +58,10 @@
 		{"Tag":28,"Input":51,"OutputType":"WS281X","OutputParam":[28,29]},
 		{"Tag":29,"Input":50,"OutputType":"WS281X","OutputParam":[29,30]},
 		{"Tag":30,"Input":49,"OutputType":"WS281X","OutputParam":[30,31]},
+		{"Tag":31,"Input":48,"OutputType":"WS281X","OutputParam":[31,32]},
 		
 		
-		
-		
+		{"Tag":32,"Input":52,"OutputType":"WS281X","OutputParam":[32,33]},
 		{"Tag":33,"Input":53,"OutputType":"WS281X","OutputParam":[33,34]},
 		{"Tag":34,"Input":54,"OutputType":"WS281X","OutputParam":[34,35]},
 		{"Tag":35,"Input":55,"OutputType":"WS281X","OutputParam":[35,36]},
@@ -77,9 +77,9 @@
 		{"Tag":44,"Input":59,"OutputType":"WS281X","OutputParam":[44,45]},
 		{"Tag":45,"Input":58,"OutputType":"WS281X","OutputParam":[45,46]},
 		{"Tag":46,"Input":57,"OutputType":"WS281X","OutputParam":[46,47]},
+		{"Tag":47,"Input":56,"OutputType":"WS281X","OutputParam":[47,48]},
 		
-		
-		
+		{"Tag":48,"Input":60,"OutputType":"WS281X","OutputParam":[48,49]},
 		{"Tag":49,"Input":61,"OutputType":"WS281X","OutputParam":[49,50]},
 		{"Tag":50,"Input":62,"OutputType":"WS281X","OutputParam":[50,51]},
 		{"Tag":51,"Input":63,"OutputType":"WS281X","OutputParam":[51,52]},
@@ -94,26 +94,27 @@
 		{"Tag":59,"Input":96,"OutputType":"WS281X","OutputParam":[59,60]},
 		{"Tag":60,"Input":67,"OutputType":"WS281X","OutputParam":[60,61]},
 		{"Tag":61,"Input":66,"OutputType":"WS281X","OutputParam":[61,62]},
-		{"Tag":62,"Input":65,"OutputType":"WS281X","OutputParam":[62,63]}
-		
+		{"Tag":62,"Input":65,"OutputType":"WS281X","OutputParam":[62,63]},
+		{"Tag":63,"Input":64,"OutputType":"WS281X","OutputParam":[63,64]}
 
       ]
-    },
+    }
+	,
 	{
-      "StationID": 2,
-      "Name": "Led Matrix pad",
+      "StationID": 3,
+      "Name": "bbb",
       "IP": "172.20.10.2",
       "Port": 2346,
       "Titles":"Input:[Note,Tag],OutputParam:[Begin,End]",
 	  "Rules": [
         {"Tag":0,"Input":36,"OutputType":"WS281X","OutputParam":[0,1]},
-        {"Tag":1,"Input":40,"OutputType":"WS281X","OutputParam":[1,2]}, 
-        {"Tag":2,"Input":44,"OutputType":"WS281X","OutputParam":[2,3]},   
-        {"Tag":3,"Input":48,"OutputType":"WS281X","OutputParam":[3,4]},
-        {"Tag":4,"Input":52,"OutputType":"WS281X","OutputParam":[4,5]},
-        {"Tag":5,"Input":56,"OutputType":"WS281X","OutputParam":[5,6]}, 
-        {"Tag":6,"Input":60,"OutputType":"WS281X","OutputParam":[6,7]},   
-        {"Tag":7,"Input":64,"OutputType":"WS281X","OutputParam":[7,8]}
+        {"Tag":1,"Input":37,"OutputType":"WS281X","OutputParam":[1,2]}, 
+        {"Tag":2,"Input":38,"OutputType":"WS281X","OutputParam":[2,3]},   
+        {"Tag":3,"Input":39,"OutputType":"WS281X","OutputParam":[3,4]},
+        {"Tag":4,"Input":68,"OutputType":"WS281X","OutputParam":[4,5]},
+        {"Tag":5,"Input":69,"OutputType":"WS281X","OutputParam":[5,6]}, 
+        {"Tag":6,"Input":70,"OutputType":"WS281X","OutputParam":[6,7]},   
+        {"Tag":7,"Input":71,"OutputType":"WS281X","OutputParam":[7,8]}
 
       ]
     }
