@@ -2,7 +2,7 @@ import json
 import socket
 
 def ReadJsonFile():
-    input_file = open ('config/StationSetup.json')
+    input_file = open ('rpi-ws281x-python-and-osc/examples/config/StationSetup.json')
     json_Data = json.load(input_file)
     
     print("[ StationSetup.json ]")
