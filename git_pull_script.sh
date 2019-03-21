@@ -1,5 +1,6 @@
 #!/bin/bash
 cd rpi-ws281x-python-and-osc
 git fetch --all
-git reset --hard origin/master
+git checkout origin/master
+git reset --hard 
 git pull
