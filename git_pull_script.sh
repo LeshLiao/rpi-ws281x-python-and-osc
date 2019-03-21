@@ -1,4 +1,4 @@
 #!/bin/bash
-cd rpi-ws281x-python-and-osc/
+cd /home/pi/rpi-ws281x-python-and-osc
 git reset --hard
 git pull
