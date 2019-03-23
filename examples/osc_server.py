@@ -2,10 +2,11 @@
 
 This program listens to several addresses, and prints some information about
 received packets.
-test pull latest version.2727 test
+test pull latest version.2727 test..
 """
 import argparse
 import math
+import git
 
 import LeshLib
 import threading
@@ -49,9 +50,16 @@ def handler_Instruction(_unusedAddr, args,_commandType,_value1,_value2):
         print("RELOAD_JSON")
         
     if(_commandType == "CHECK_OSC"):
+        path = "/home/pi/rpi-ws281x-python-and-osc"
+        repo = git.Repo(path, search_parent_directories=True)
+        
+        sha = repo.head.object.hexsha
+
         client = udp_client.SimpleUDPClient(_value1, int(_value2))
-        list1 = [GetLocalIp(),GetLocalOscPort()]
+        list1 = [GetLocalIp(),GetLocalOscPort(),sha]
         client.send_message("/Response",list1)
+        
+
         
     if(_commandType == "BREATHING_LIGHT"):   
         TestNum = int(_value1)
