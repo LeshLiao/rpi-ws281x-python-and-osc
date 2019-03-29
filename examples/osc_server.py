@@ -2,7 +2,7 @@
 
 This program listens to several addresses, and prints some information about
 received packets.
-test pull latest version.2727 test..
+test pull latest version.2727 test....
 """
 import argparse
 import math
@@ -17,7 +17,12 @@ from pythonosc import udp_client
 
 from strandtest import *
 from LeshJson import *
+from pyudmx import pyudmx
+from time import sleep
 
+
+dev = pyudmx.uDMXDevice()
+DmxBuffer = [0 for v in range(0, 256)]
 
 def LightWS(_dataList):
     global DataWs  
@@ -31,7 +36,24 @@ def LightWS(_dataList):
     strip.show()
 
 def LightDMX(_dataList):
-    global DataWs  
+    global DataDmx  
+    global DmxBuffer
+    _dmxIndex = 0
+    _dmxDimmer = 64
+    for _data in DataDmx:
+        index = _data[0]
+        colorR, colorG, colorB = LeshLib.GetColorByVolume(int(_dataList[index]))
+        _dmxIndex = _data[1] + _data[3] - 1  # dimmer
+        DmxBuffer[_dmxIndex] = _dmxDimmer
+        _dmxIndex = _data[1] + _data[4] - 1  # red
+        DmxBuffer[_dmxIndex] = colorR
+        _dmxIndex = _data[1] + _data[5] - 1  # green
+        DmxBuffer[_dmxIndex] = colorG
+        _dmxIndex = _data[1] + _data[6] - 1  # blue
+        DmxBuffer[_dmxIndex] = colorB
+        
+    sent = dev.send_multi_value(1, DmxBuffer)
+    return sent    
 
 def handler_Instruction(_unusedAddr, args,_commandType,_value1,_value2):
     global TestNum
@@ -52,15 +74,12 @@ def handler_Instruction(_unusedAddr, args,_commandType,_value1,_value2):
     if(_commandType == "CHECK_OSC"):
         path = "/home/pi/rpi-ws281x-python-and-osc"
         repo = git.Repo(path, search_parent_directories=True)
-        
         sha = repo.head.object.hexsha
 
         client = udp_client.SimpleUDPClient(_value1, int(_value2))
         list1 = [GetLocalIp(),GetLocalOscPort(),sha]
         client.send_message("/Response",list1)
-        
-
-        
+      
     if(_commandType == "BREATHING_LIGHT"):   
         TestNum = int(_value1)
    
@@ -78,31 +97,68 @@ def job():
 
 def handler_MatrixVelocity(unused_addr, args,MarixString):
     tempList = MarixString.split(',')
-
     if (True):
         LightWS(tempList)
-        
     if (True):
         LightDMX(tempList)
 
+ 
+  
+def send_rgb(dev,channel, red, green, blue, dimmer):
     """
-    tempList = MarixString.split(',')
-    ListIndex = 0
-    maxlen = len(tempList)-1
-    for i in range(0,maxlen):
-        tempInt = int(tempList[i])
-        colorR, colorG, colorB = LeshLib.GetColorByVolume(tempInt)
-        strip.setPixelColor(i,Color(colorR,colorG,colorB))
-    strip.show()
-    #$print("print_handler_TagAndVelocity:[{0}]:{1},{2}".format(args[0],args[1],args[2]))
+    Send a set of RGB values to the light
     """
+   
+    
+    #cv = [0 for v in range(0, 512)]
+    cv = [0 for v in range(0, 256)]
+    cv[0] = dimmer
+    cv[1] = red
+    cv[2] = green
+    cv[3] = blue
+    sent = dev.send_multi_value(channel, cv)
+    return sent
 
 
-def print_compute_handler(unused_addr, args, volume):
-  try:
-    print("[{0}] ~ {1}".format(args[0], args[1](volume)))
-  except ValueError: pass
+def main_dmx_test():
+    """
+    How to control a DMX light through an Anyma USB controller
+    """
+    # Channel value list for channels 1-512
+    cv = [0 for v in range(0, 512)]
+    # Create an instance of the DMX controller and open it    
+    print("Opening DMX controller...")
+    
+    # This will automagically find a single Anyma-type USB DMX controller
+    dev.open()
+    # For informational purpose, display what we know about the DMX controller
+    print(dev.Device)
+    
+    # Here's an easier way to do it
 
+    print("And, again the easier way")
+    send_rgb(dev,1, 255, 0, 0, 128)
+    sleep(0.5)
+    send_rgb(dev,1, 0, 255, 0, 128)
+    sleep(0.5)
+    send_rgb(dev,1, 0, 0, 255, 128)
+    sleep(0.5)
+    
+    send_rgb(dev,9, 255, 0, 0, 128)
+    sleep(0.5)
+    send_rgb(dev,9, 0, 255, 0, 128)
+    sleep(0.5)
+    send_rgb(dev,9, 0, 0, 255, 128)
+    sleep(0.5)
+   
+    print("Reset all channels and close..")
+    # Turns the light off
+    cv = [0 for v in range(0, 512)]
+    dev.send_multi_value(1, cv)
+    
+    #dev.close()
+
+    
 if __name__ == "__main__":
   myLocalIP = GetLocalIp()
   myLocalOscPort = GetLocalOscPort()
@@ -114,8 +170,6 @@ if __name__ == "__main__":
       type=int, default=myLocalOscPort, help="The port to listen on.")
   args = parser.parse_args()
 
-  #10.1.1.6
-  
   dispatcher = dispatcher.Dispatcher()
   dispatcher.map("/MatrixVelocity", handler_MatrixVelocity,"PrintValueAAA")
   dispatcher.map("/Instruction", handler_Instruction,"test1","test2")
@@ -133,9 +187,10 @@ if __name__ == "__main__":
   t.start()
   
   ReadJsonFile()
+  main_dmx_test()
   
   server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)
-  print("Serving on(test01) {}".format(server.server_address))
+  print("Serving on {}".format(server.server_address))
   server.serve_forever()
   
   

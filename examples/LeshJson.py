@@ -37,14 +37,25 @@ def InitDataWs(_ruleList):
                 DataWs[-1].append(_param)
             
             #print(str(index)+"item:"+item['OutputType']) 
+    print("WS281X:")
     print(DataWs) 
          
         
 DataDmx = [] 
 def InitDataDmx(_ruleList): 
     global DataDmx
-    
-    
+    DataDmx.clear() 
+
+    for index, item in enumerate(_ruleList):
+        if(item['OutputType'] == "DMX"):
+            DataDmx.append([])
+            DataDmx[-1].append(index)
+            for _param in item['OutputParam']:
+                DataDmx[-1].append(_param)
+            
+            #print(str(index)+"item:"+item['OutputType']) 
+    print("DMX:") 
+    print(DataDmx) 
      
 def GetLocalIp(): 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
