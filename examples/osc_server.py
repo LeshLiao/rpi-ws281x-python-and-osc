@@ -137,25 +137,29 @@ def main_dmx_test():
     # Here's an easier way to do it
 
     print("And, again the easier way")
-    send_rgb(dev,1, 255, 0, 0, 128)
-    sleep(0.5)
-    send_rgb(dev,1, 0, 255, 0, 128)
-    sleep(0.5)
-    send_rgb(dev,1, 0, 0, 255, 128)
-    sleep(0.5)
     
-    send_rgb(dev,9, 255, 0, 0, 128)
-    sleep(0.5)
-    send_rgb(dev,9, 0, 255, 0, 128)
-    sleep(0.5)
-    send_rgb(dev,9, 0, 0, 255, 128)
-    sleep(0.5)
-   
-    print("Reset all channels and close..")
-    # Turns the light off
-    cv = [0 for v in range(0, 512)]
-    dev.send_multi_value(1, cv)
-    
+    try:
+        send_rgb(dev,1, 255, 0, 0, 128)
+        sleep(0.5)
+        send_rgb(dev,1, 0, 255, 0, 128)
+        sleep(0.5)
+        send_rgb(dev,1, 0, 0, 255, 128)
+        sleep(0.5)
+        
+        send_rgb(dev,9, 255, 0, 0, 128)
+        sleep(0.5)
+        send_rgb(dev,9, 0, 255, 0, 128)
+        sleep(0.5)
+        send_rgb(dev,9, 0, 0, 255, 128)
+        sleep(0.5)
+       
+        print("Reset all channels and close..")
+        # Turns the light off
+        cv = [0 for v in range(0, 512)]
+        
+        dev.send_multi_value(1, cv)
+    except:
+        print("DMX Warning:DMX USB Device Error...")
     #dev.close()
 
     
