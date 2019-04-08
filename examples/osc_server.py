@@ -96,10 +96,11 @@ def job():
     time.sleep(0.01)
 
 def handler_MatrixVelocity(unused_addr, args,MarixString):
+
     tempList = MarixString.split(',')
     if (True):
         LightWS(tempList)
-    if (True):
+    if (LeshLib.IsDmxAvailible and LeshLib.IsDmxDataExist):
         LightDMX(tempList)
 
  
@@ -121,6 +122,7 @@ def send_rgb(dev,channel, red, green, blue, dimmer):
 
 
 def main_dmx_test():
+
     """
     How to control a DMX light through an Anyma USB controller
     """
@@ -158,7 +160,9 @@ def main_dmx_test():
         cv = [0 for v in range(0, 512)]
         
         dev.send_multi_value(1, cv)
+        LeshLib.IsDmxAvailible = True
     except:
+        LeshLib.IsDmxAvailible = False
         print("DMX Warning:DMX USB Device Error...")
     #dev.close()
 
@@ -190,6 +194,7 @@ if __name__ == "__main__":
   t.setDaemon(True)
   t.start()
   
+  LeshLib.init_global_var()
   ReadJsonFile()
   main_dmx_test()
   

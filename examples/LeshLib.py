@@ -1,4 +1,13 @@
 
+def init_global_var():
+    global myList
+    myList = []
+    
+    global IsDmxAvailible
+    IsDmxAvailible = False
+    
+    global IsDmxDataExist
+    IsDmxDataExist = False
 
 a = [[0, 0, 0],
      [33, 33, 33],

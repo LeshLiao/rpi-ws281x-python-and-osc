@@ -1,5 +1,6 @@
 import json
 import socket
+import LeshLib
 
 def ReadJsonFile():
     input_file = open ('rpi-ws281x-python-and-osc/examples/config/StationSetup.json')
@@ -48,6 +49,7 @@ def InitDataDmx(_ruleList):
 
     for index, item in enumerate(_ruleList):
         if(item['OutputType'] == "DMX"):
+            LeshLib.IsDmxDataExist = True
             DataDmx.append([])
             DataDmx[-1].append(index)
             for _param in item['OutputParam']:
