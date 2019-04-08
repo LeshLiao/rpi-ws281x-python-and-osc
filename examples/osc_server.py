@@ -43,13 +43,13 @@ def LightDMX(_dataList):
     for _data in DataDmx:
         index = _data[0]
         colorR, colorG, colorB = LeshLib.GetColorByVolume(int(_dataList[index]))
-        _dmxIndex = _data[1] + _data[3] - 1  # dimmer
+        _dmxIndex = _data[1] + _data[3] - 2  # dimmer
         DmxBuffer[_dmxIndex] = _dmxDimmer
-        _dmxIndex = _data[1] + _data[4] - 1  # red
+        _dmxIndex = _data[1] + _data[4] - 2  # red
         DmxBuffer[_dmxIndex] = colorR
-        _dmxIndex = _data[1] + _data[5] - 1  # green
+        _dmxIndex = _data[1] + _data[5] - 2  # green
         DmxBuffer[_dmxIndex] = colorG
-        _dmxIndex = _data[1] + _data[6] - 1  # blue
+        _dmxIndex = _data[1] + _data[6] - 2  # blue
         DmxBuffer[_dmxIndex] = colorB
         
     sent = dev.send_multi_value(1, DmxBuffer)
