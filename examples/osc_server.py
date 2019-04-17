@@ -137,11 +137,7 @@ def main_dmx_test():
     dev.open()
     # For informational purpose, display what we know about the DMX controller
     print(dev.Device)
-    
-    # Here's an easier way to do it
 
-    print("And, again the easier way")
-    
     try:
         send_rgb(dev,1, 255, 0, 0, 128)
         sleep(0.5)
@@ -175,12 +171,11 @@ def InitDevices():
     for index, item in enumerate(LeshLib.DeviceConfigList):
         if(item['Type'] == "WS281X"):
             _paramData = item['Config']
-            print(str(_paramData[0]))
                 
     booleanInvert = False
-    if _paramData[4] == 1:
+    if _paramData[4] == "1":
         booleanInvert = True
-    strip = Adafruit_NeoPixel(_paramData[0], _paramData[1], _paramData[2], _paramData[3], booleanInvert, _paramData[5], _paramData[6],int(_paramData[7], 0))
+    strip = Adafruit_NeoPixel(int(_paramData[0]), int(_paramData[1]), int(_paramData[2]), int(_paramData[3]), booleanInvert, int(_paramData[5]), int(_paramData[6]),int(_paramData[7], 0))
     strip.begin()
     
     #Led Lighting Test

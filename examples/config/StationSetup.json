@@ -1,7 +1,7 @@
 {
   "ProjectName": "Light Project Test",
   "FileVersion": "00.00.01",
-  "Timestamp": "1550044085656",
+  "Timestamp": "1550044085959",
   "MyStations": [
     {
       "StationID": 0,
@@ -10,8 +10,8 @@
       "Port": 2346,
       "Titles":"Input:[Note,Tag],OutputParam:[BeginChannel,MaxChannel,Dimmer,Red,Green,Blue]",
 	  "Devices":[
-		{"Type":"WS281X","Config":[600,18,800000,10,0,128,0,"0x00081000"]},
-		{"Type":"DMX","Config":[0,0,0]}
+		{"Type":"WS281X","Config":["64","18","800000","10","0","128","0","0x00081000"]},
+		{"Type":"DMX","Config":["0","0","0"]}
 	  ],
 	  "Rules": [
         {"Tag":0,"Input":112,"OutputType":"DMX","OutputParam":[1,8,0,1,2,3]},
@@ -28,8 +28,8 @@
       "Port": 2346,
       "Titles":"Input:[Note,Tag],OutputParam:[Begin,End]",
 	  "Devices":[
-		{"Type":"WS281X","Config":[600,18,800000,10,0,128,0,"0x00081000"]},
-		{"Type":"DMX","Config":[0,0,0]}
+		{"Type":"WS281X","Config":["150","18","800000","10","0","128","0","0x00081000"]},
+		{"Type":"DMX","Config":["0","0","0"]}
 	  ],
 	  "Rules": [
         {"Tag":0,"Input":36,"OutputType":"WS281X","OutputParam":[0,8]},
@@ -51,8 +51,8 @@
       "Port": 2346,
       "Titles":"Input:[Note,Tag],WS281X OutputParam:[Begin,End] Input:[Note,Tag],DMX OutputParam:[BeginChannel,MaxChannel,Dimmer,Red,Green,Blue]",
 	  "Devices":[
-		{"Type":"WS281X","Config":[600,18,800000,10,0,128,0,"0x00081000"]},
-		{"Type":"DMX","Config":[0,0,0]}
+		{"Type":"WS281X","Config":["64","18","800000","10","0","128","0","0x00081000"]},
+		{"Type":"DMX","Config":["0","0","0"]}
 	  ],
 	  "Rules": [
         {"Tag":0,"Input":48,"OutputType":"WS281X","OutputParam":[0,2]},
