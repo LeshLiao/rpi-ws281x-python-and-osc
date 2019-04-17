@@ -18,9 +18,9 @@ def ReadJsonFile():
         #print("Port:" + str(item['Port']))
         if(GetLocalIp() == item['IP']):
             CurrentRuleList = item['Rules']
+            LeshLib.DeviceConfigList = item['Devices']
             print("We found RuleList():"+GetLocalIp())
             break
-    
     InitDataWs(CurrentRuleList)
     InitDataDmx(CurrentRuleList)
 

@@ -1,7 +1,7 @@
 {
   "ProjectName": "Light Project Test",
   "FileVersion": "00.00.01",
-  "Timestamp": "1550044082117",
+  "Timestamp": "1550044085656",
   "MyStations": [
     {
       "StationID": 0,
@@ -9,6 +9,10 @@
       "IP": "10.1.1.12",
       "Port": 2346,
       "Titles":"Input:[Note,Tag],OutputParam:[BeginChannel,MaxChannel,Dimmer,Red,Green,Blue]",
+	  "Devices":[
+		{"Type":"WS281X","Config":[600,18,800000,10,0,128,0,"0x00081000"]},
+		{"Type":"DMX","Config":[0,0,0]}
+	  ],
 	  "Rules": [
         {"Tag":0,"Input":112,"OutputType":"DMX","OutputParam":[1,8,0,1,2,3]},
         {"Tag":1,"Input":113,"OutputType":"DMX","OutputParam":[9,8,0,1,2,3]}, 
@@ -23,6 +27,10 @@
       "IP": "172.20.10.13",
       "Port": 2346,
       "Titles":"Input:[Note,Tag],OutputParam:[Begin,End]",
+	  "Devices":[
+		{"Type":"WS281X","Config":[600,18,800000,10,0,128,0,"0x00081000"]},
+		{"Type":"DMX","Config":[0,0,0]}
+	  ],
 	  "Rules": [
         {"Tag":0,"Input":36,"OutputType":"WS281X","OutputParam":[0,8]},
         {"Tag":1,"Input":40,"OutputType":"WS281X","OutputParam":[8,16]}, 
@@ -42,19 +50,26 @@
       "IP": "172.20.10.2",
       "Port": 2346,
       "Titles":"Input:[Note,Tag],WS281X OutputParam:[Begin,End] Input:[Note,Tag],DMX OutputParam:[BeginChannel,MaxChannel,Dimmer,Red,Green,Blue]",
+	  "Devices":[
+		{"Type":"WS281X","Config":[600,18,800000,10,0,128,0,"0x00081000"]},
+		{"Type":"DMX","Config":[0,0,0]}
+	  ],
 	  "Rules": [
         {"Tag":0,"Input":48,"OutputType":"WS281X","OutputParam":[0,2]},
 		{"Tag":6,"Input":48,"OutputType":"WS281X","OutputParam":[14,16]}, 
+        {"Tag":0,"Input":49,"OutputType":"WS281X","OutputParam":[16,18]},
+		{"Tag":6,"Input":49,"OutputType":"WS281X","OutputParam":[30,32]}, 
+
         {"Tag":1,"Input":44,"OutputType":"WS281X","OutputParam":[2,4]}, 
 		{"Tag":4,"Input":44,"OutputType":"WS281X","OutputParam":[12,14]},
         {"Tag":3,"Input":40,"OutputType":"WS281X","OutputParam":[4,6]},
 		{"Tag":2,"Input":40,"OutputType":"WS281X","OutputParam":[10,12]}, 
         {"Tag":5,"Input":36,"OutputType":"WS281X","OutputParam":[6,8]}, 
 		{"Tag":0,"Input":36,"OutputType":"WS281X","OutputParam":[8,10]},
-        {"Tag":8,"Input":36,"OutputType":"DMX","OutputParam":[1,8,3,4,5,6]},
-        {"Tag":9,"Input":113,"OutputType":"DMX","OutputParam":[9,8,0,1,2,3]}, 
-        {"Tag":10,"Input":114,"OutputType":"DMX","OutputParam":[17,8,0,1,2,3]},   
-        {"Tag":11,"Input":115,"OutputType":"DMX","OutputParam":[25,8,0,1,2,3]}
+
+        {"Tag":8,"Input":36,"OutputType":"DMX","OutputParam":[1,8,4,5,6,7]},
+        {"Tag":9,"Input":48,"OutputType":"DMX","OutputParam":[9,7,1,2,3,4]}
+
       ]
     }
   ]

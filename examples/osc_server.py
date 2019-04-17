@@ -22,7 +22,8 @@ from time import sleep
 
 
 dev = pyudmx.uDMXDevice()
-DmxBuffer = [0 for v in range(0, 256)]
+DmxBuffer = [0 for v in range(0, 256)] #TODO
+TestNum = 255
 
 def LightWS(_dataList):
     global DataWs  
@@ -83,7 +84,7 @@ def handler_Instruction(_unusedAddr, args,_commandType,_value1,_value2):
     if(_commandType == "BREATHING_LIGHT"):   
         TestNum = int(_value1)
    
-def job():
+def job():  # gamma function?
   #for i in range(5):
   global TestNum
   while True:
@@ -97,6 +98,7 @@ def job():
 
 def handler_MatrixVelocity(unused_addr, args,MarixString):
 
+    #TODO split to 2 thread?
     tempList = MarixString.split(',')
     if (True):
         LightWS(tempList)
@@ -166,40 +168,55 @@ def main_dmx_test():
         print("DMX Warning:DMX USB Device Error...")
     #dev.close()
 
+def InitDevices():
+    _paramData = []
+    global strip
     
-if __name__ == "__main__":
-  myLocalIP = GetLocalIp()
-  myLocalOscPort = GetLocalOscPort()
-  
-  parser = argparse.ArgumentParser()
-  parser.add_argument("--ip",
-      default=myLocalIP, help="The ip to listen on.")
-  parser.add_argument("--port",
-      type=int, default=myLocalOscPort, help="The port to listen on.")
-  args = parser.parse_args()
+    for index, item in enumerate(LeshLib.DeviceConfigList):
+        if(item['Type'] == "WS281X"):
+            _paramData = item['Config']
+            print(str(_paramData[0]))
+                
+    booleanInvert = False
+    if _paramData[4] == 1:
+        booleanInvert = True
+    strip = Adafruit_NeoPixel(_paramData[0], _paramData[1], _paramData[2], _paramData[3], booleanInvert, _paramData[5], _paramData[6],int(_paramData[7], 0))
+    strip.begin()
+    
+    #Led Lighting Test
+    colorWipe(strip, Color(255, 255, 255))  # Test Red wipe
+    ChangeAllColorWipe(strip, Color(255, 0, 0))
+    sleep(0.5)
+    ChangeAllColorWipe(strip, Color(0, 255, 0))
+    sleep(0.5)
+    ChangeAllColorWipe(strip, Color(0, 0, 255))
+    sleep(0.5)
+    
+    t = threading.Thread(target = job)
+    t.setDaemon(True)
+    t.start()
 
-  dispatcher = dispatcher.Dispatcher()
-  dispatcher.map("/MatrixVelocity", handler_MatrixVelocity,"PrintValueAAA")
-  dispatcher.map("/Instruction", handler_Instruction,"test1","test2")
-  
-  #initled()
-  #opt_parse()
-  
-  strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-  strip.begin()
-  colorWipe(strip, Color(255, 255, 255))  # White wipe
-  
-  TestNum = 255
-  t = threading.Thread(target = job)
-  t.setDaemon(True)
-  t.start()
-  
-  LeshLib.init_global_var()
-  ReadJsonFile()
-  main_dmx_test()
-  
-  server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)
-  print("Serving on {}".format(server.server_address))
-  server.serve_forever()
-  
-  
+
+if __name__ == "__main__":
+    myLocalIP = GetLocalIp()
+    myLocalOscPort = GetLocalOscPort()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ip",default=myLocalIP, help="The ip to listen on.")
+    parser.add_argument("--port",type=int, default=myLocalOscPort, help="The port to listen on.")
+    args = parser.parse_args()
+
+    # Initial
+    LeshLib.init_global_var()
+    ReadJsonFile()
+    InitDevices()
+    main_dmx_test()
+    
+    # OSC Server
+    dispatcher = dispatcher.Dispatcher()
+    dispatcher.map("/MatrixVelocity", handler_MatrixVelocity,"PrintValueAAA")
+    dispatcher.map("/Instruction", handler_Instruction,"test1","test2")
+    server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)
+    print("Serving on {}".format(server.server_address))
+    server.serve_forever()
+

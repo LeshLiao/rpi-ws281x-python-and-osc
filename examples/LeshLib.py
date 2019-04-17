@@ -8,6 +8,9 @@ def init_global_var():
     
     global IsDmxDataExist
     IsDmxDataExist = False
+    
+    global DeviceConfigList
+    DeviceConfigList = []
 
 a = [[0, 0, 0],
      [33, 33, 33],
