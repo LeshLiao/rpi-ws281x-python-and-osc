@@ -6,6 +6,9 @@ def init_global_var():
     global RuleListSize
     RuleListSize = 0
     
+    global DmxMaxChannel
+    DmxMaxChannel = 0
+    
     global IsDmxAvailible
     IsDmxAvailible = False
     

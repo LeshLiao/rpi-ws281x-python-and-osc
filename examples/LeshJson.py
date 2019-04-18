@@ -47,16 +47,25 @@ DataDmx = []
 def InitDataDmx(_ruleList): 
     global DataDmx
     DataDmx.clear() 
+    _DmxData = []
 
     for index, item in enumerate(_ruleList):
         if(item['OutputType'] == "DMX"):
             LeshLib.IsDmxDataExist = True
             DataDmx.append([])
             DataDmx[-1].append(index)
+            _DmxData = item['OutputParam']
             for _param in item['OutputParam']:
                 DataDmx[-1].append(_param)
-            
+
+            sum = _DmxData[0]+_DmxData[1]
+            if (sum > LeshLib.DmxMaxChannel):
+                LeshLib.DmxMaxChannel = sum
+                
             #print(str(index)+"item:"+item['OutputType']) 
+            
+    LeshLib.DmxMaxChannel = LeshLib.DmxMaxChannel - 1
+    print("DmxMaxChannel:"+str(LeshLib.DmxMaxChannel))
     print("DMX:") 
     print(DataDmx) 
      

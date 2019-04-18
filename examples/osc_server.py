@@ -7,6 +7,7 @@ test pull latest version.2727 test....
 import argparse
 import math
 import git
+import datetime
 
 import LeshLib
 import threading
@@ -22,7 +23,8 @@ from time import sleep
 
 # global
 dev = pyudmx.uDMXDevice()
-DmxBuffer = [0 for v in range(0, 256)] #TODO
+#DmxBuffer = [0 for v in range(0, 32)] #TODO
+DmxBuffer = []
 DmxStartNum = 0
 DmxDimmer = 0
 TestNum = 255
@@ -127,6 +129,9 @@ def InitDmxDevice():
     # For informational purpose, display what we know about the DMX controller
     print(dev.Device)
     
+    global DmxBuffer
+    DmxBuffer = [0 for v in range(0, LeshLib.DmxMaxChannel)] #TODO
+    #DmxBuffer = [0 for v in range(0, 512)] #TODO
     _paramData = []
     
     try:
@@ -139,7 +144,7 @@ def InitDmxDevice():
         DmxStartNum = int(_paramData[0])
         DmxDimmer = int(_paramData[1])
         
-        # Turns the light off
+        # Turns the light all off and test dmx usb device
         cv = [0 for v in range(0, 512)]
         dev.send_multi_value(1, cv)
         LeshLib.IsDmxAvailible = True
@@ -195,6 +200,11 @@ if __name__ == "__main__":
     parser.add_argument("--ip",default=myLocalIP, help="The ip to listen on.")
     parser.add_argument("--port",type=int, default=myLocalOscPort, help="The port to listen on.")
     args = parser.parse_args()
+
+    testaaa = []
+    print(testaaa)
+    testaaa = [0 for v in range(0, 5)] 
+    print(testaaa)
 
     # Initial
     LeshLib.init_global_var()
