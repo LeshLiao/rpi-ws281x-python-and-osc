@@ -20,9 +20,11 @@ from LeshJson import *
 from pyudmx import pyudmx
 from time import sleep
 
-
+# global
 dev = pyudmx.uDMXDevice()
 DmxBuffer = [0 for v in range(0, 256)] #TODO
+DmxStartNum = 0
+DmxDimmer = 0
 TestNum = 255
 
 def LightWS(_dataList):
@@ -39,8 +41,10 @@ def LightWS(_dataList):
 def LightDMX(_dataList):
     global DataDmx  
     global DmxBuffer
-    _dmxIndex = 0
-    _dmxDimmer = 64
+    global DmxStartNum
+    global DmxDimmer
+    _dmxIndex = DmxStartNum
+    _dmxDimmer = DmxDimmer
     for _data in DataDmx:
         index = _data[0]
         colorR, colorG, colorB = LeshLib.GetColorByVolume(int(_dataList[index]))
@@ -85,13 +89,12 @@ def handler_Instruction(_unusedAddr, args,_commandType,_value1,_value2):
         TestNum = int(_value1)
    
 def job():  # gamma function?
-  #for i in range(5):
   global TestNum
   while True:
     if(TestNum >= 0):
+        if TestNum < 4: TestNum = 0
         for j in range(strip.numPixels()):
             strip.setPixelColor(j,Color(TestNum,TestNum,TestNum))
-        #print("Child thread:", TestNum)
         strip.show()
         TestNum = TestNum - 4
     time.sleep(0.01)
@@ -100,71 +103,63 @@ def handler_MatrixVelocity(unused_addr, args,MarixString):
 
     #TODO split to 2 thread?
     tempList = MarixString.split(',')
+
     if (True):
         LightWS(tempList)
     if (LeshLib.IsDmxAvailible and LeshLib.IsDmxDataExist):
         LightDMX(tempList)
 
- 
-  
-def send_rgb(dev,channel, red, green, blue, dimmer):
-    """
-    Send a set of RGB values to the light
-    """
-   
-    
-    #cv = [0 for v in range(0, 512)]
-    cv = [0 for v in range(0, 256)]
-    cv[0] = dimmer
-    cv[1] = red
-    cv[2] = green
-    cv[3] = blue
-    sent = dev.send_multi_value(channel, cv)
-    return sent
+def WipeAllDmxLight(colorNum):
+    global DataDmx  
+    DmxTestList = [0 for x in range(LeshLib.RuleListSize)]
+    for _data in DataDmx:
+        index = _data[0]
+        DmxTestList[index] = colorNum
+    LightDMX(DmxTestList)
 
+def InitDmxDevice():
 
-def main_dmx_test():
-
-    """
-    How to control a DMX light through an Anyma USB controller
-    """
     # Channel value list for channels 1-512
     cv = [0 for v in range(0, 512)]
-    # Create an instance of the DMX controller and open it    
     print("Opening DMX controller...")
-    
     # This will automagically find a single Anyma-type USB DMX controller
     dev.open()
     # For informational purpose, display what we know about the DMX controller
     print(dev.Device)
-
+    
+    _paramData = []
+    
     try:
-        send_rgb(dev,1, 255, 0, 0, 128)
-        sleep(0.5)
-        send_rgb(dev,1, 0, 255, 0, 128)
-        sleep(0.5)
-        send_rgb(dev,1, 0, 0, 255, 128)
-        sleep(0.5)
+        global DmxStartNum
+        global DmxDimmer
+        for index, item in enumerate(LeshLib.DeviceConfigList):
+            if(item['Type'] == "DMX"):
+                _paramData = item['Config']
+                break
+        DmxStartNum = int(_paramData[0])
+        DmxDimmer = int(_paramData[1])
         
-        send_rgb(dev,9, 255, 0, 0, 128)
-        sleep(0.5)
-        send_rgb(dev,9, 0, 255, 0, 128)
-        sleep(0.5)
-        send_rgb(dev,9, 0, 0, 255, 128)
-        sleep(0.5)
-       
-        print("Reset all channels and close..")
         # Turns the light off
         cv = [0 for v in range(0, 512)]
-        
         dev.send_multi_value(1, cv)
         LeshLib.IsDmxAvailible = True
+        
+        WipeAllDmxLight(3)  #W
+        time.sleep(0.5)
+        WipeAllDmxLight(6)  #R
+        time.sleep(0.5)
+        WipeAllDmxLight(21) #G
+        time.sleep(0.5)
+        WipeAllDmxLight(45) #B
+        time.sleep(0.5)
+        WipeAllDmxLight(0)  #0
+        time.sleep(0.5)
+        
     except:
         LeshLib.IsDmxAvailible = False
         print("DMX Warning:DMX USB Device Error...")
-    #dev.close()
 
-def InitDevices():
+def InitWsDevice():
     _paramData = []
     global strip
     
@@ -180,6 +175,7 @@ def InitDevices():
     
     #Led Lighting Test
     colorWipe(strip, Color(255, 255, 255))  # Test Red wipe
+    sleep(0.5)
     ChangeAllColorWipe(strip, Color(255, 0, 0))
     sleep(0.5)
     ChangeAllColorWipe(strip, Color(0, 255, 0))
@@ -190,7 +186,6 @@ def InitDevices():
     t = threading.Thread(target = job)
     t.setDaemon(True)
     t.start()
-
 
 if __name__ == "__main__":
     myLocalIP = GetLocalIp()
@@ -204,14 +199,14 @@ if __name__ == "__main__":
     # Initial
     LeshLib.init_global_var()
     ReadJsonFile()
-    InitDevices()
-    main_dmx_test()
+    InitWsDevice()
+    InitDmxDevice()
     
     # OSC Server
     dispatcher = dispatcher.Dispatcher()
-    dispatcher.map("/MatrixVelocity", handler_MatrixVelocity,"PrintValueAAA")
+    dispatcher.map("/MatrixVelocity", handler_MatrixVelocity,"PrintValue")
     dispatcher.map("/Instruction", handler_Instruction,"test1","test2")
     server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)
-    print("Serving on {}".format(server.server_address))
+    print("OSC Serving on {}".format(server.server_address))
     server.serve_forever()
 
