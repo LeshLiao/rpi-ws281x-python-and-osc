@@ -12,6 +12,7 @@ def ReadJsonFile():
     
     json_array = json_Data['MyStations']
     CurrentRuleList = []
+    LeshLib.JsonTimestamp = json_Data['Timestamp']
     
     for item in json_array:
         #print("IP:" + item['IP'])

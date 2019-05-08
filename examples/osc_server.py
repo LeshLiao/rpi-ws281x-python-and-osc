@@ -84,7 +84,7 @@ def handler_Instruction(_unusedAddr, args,_commandType,_value1,_value2):
         sha = repo.head.object.hexsha
 
         client = udp_client.SimpleUDPClient(_value1, int(_value2))
-        list1 = [GetLocalIp(),GetLocalOscPort(),sha]
+        list1 = [GetLocalIp(),GetLocalOscPort(),sha,LeshLib.JsonTimestamp]
         client.send_message("/Response",list1)
       
     if(_commandType == "BREATHING_LIGHT"):   

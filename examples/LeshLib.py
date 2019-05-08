@@ -17,6 +17,8 @@ def init_global_var():
     
     global DeviceConfigList
     DeviceConfigList = []
+    
+    global JsonTimestamp
 
 a = [[0, 0, 0],
      [33, 33, 33],
