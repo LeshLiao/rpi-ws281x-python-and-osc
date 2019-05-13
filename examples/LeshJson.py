@@ -13,6 +13,7 @@ def ReadJsonFile():
     json_array = json_Data['MyStations']
     CurrentRuleList = []
     LeshLib.JsonTimestamp = json_Data['Timestamp']
+    MatchDeviceIP = False
     
     for item in json_array:
         #print("IP:" + item['IP'])
@@ -22,10 +23,17 @@ def ReadJsonFile():
             LeshLib.RuleListSize = len(CurrentRuleList)
             LeshLib.DeviceConfigList = item['Devices']
             print("We found RuleList():"+GetLocalIp()+",Rule list size:"+str(LeshLib.RuleListSize))
+            MatchDeviceIP = True
             break
-    InitDataWs(CurrentRuleList)
-    InitDataDmx(CurrentRuleList)
-
+            
+    if(MatchDeviceIP):
+        InitDataWs(CurrentRuleList)
+        InitDataDmx(CurrentRuleList)
+        return True
+    else:
+        LeshLib.JsonTimestamp += "(No IP match)"
+        return False
+    
     
 DataWs = []
 def InitDataWs(_ruleList): 

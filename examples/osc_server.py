@@ -208,9 +208,11 @@ if __name__ == "__main__":
 
     # Initial
     LeshLib.init_global_var()
-    ReadJsonFile()
-    InitWsDevice()
-    InitDmxDevice()
+    if(ReadJsonFile()):
+        InitWsDevice()
+        InitDmxDevice()
+    else:
+        print("No match device setting in Json file:"+myLocalIP)
     
     # OSC Server
     dispatcher = dispatcher.Dispatcher()
