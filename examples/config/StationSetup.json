@@ -1,7 +1,7 @@
 {
   "ProjectName": "Light Project Test",
   "FileVersion": "00.00.01",
-  "Timestamp": "1550044086262",
+  "Timestamp": "1557733306",
   "MyStations": [
     {
       "StationID": 0,
@@ -24,7 +24,7 @@
     {
       "StationID": 1,
       "Name": "Led Matrix pad",
-      "IP": "172.20.10.13",
+      "IP": "192.168.1.100",
       "Port": 2346,
       "Titles":"Input:[Note,Tag],OutputParam:[Begin,End]",
 	  "Devices":[
@@ -48,7 +48,7 @@
 	{
       "StationID": 1,
       "Name": "Led Matrix pad",
-      "IP": "172.20.10.2",
+      "IP": "192.168.1.101",
       "Port": 2346,
       "Titles":"Input:[Note,Tag],WS281X OutputParam:[Begin,End] Input:[Note,Tag],DMX OutputParam:[BeginChannel,MaxChannel,Dimmer,Red,Green,Blue]",
 	  "Devices":[

@@ -20,6 +20,7 @@ def ReadJsonFile():
         #print("Port:" + str(item['Port']))
         if(GetLocalIp() == item['IP']):
             CurrentRuleList = item['Rules']
+            LeshLib.MyOscPort = item['Port']
             LeshLib.RuleListSize = len(CurrentRuleList)
             LeshLib.DeviceConfigList = item['Devices']
             print("We found RuleList():"+GetLocalIp()+",Rule list size:"+str(LeshLib.RuleListSize))
@@ -86,5 +87,3 @@ def GetLocalIp():
     s.close()
     return MyLocalIp
 
-def GetLocalOscPort(): 
-    return 2346

@@ -79,17 +79,19 @@ def handler_Instruction(_unusedAddr, args,_commandType,_value1,_value2):
         print("RELOAD_JSON")
         
     if(_commandType == "CHECK_OSC"):
-        path = "/home/pi/rpi-ws281x-python-and-osc"
-        repo = git.Repo(path, search_parent_directories=True)
-        sha = repo.head.object.hexsha
-
-        client = udp_client.SimpleUDPClient(_value1, int(_value2))
-        list1 = [GetLocalIp(),GetLocalOscPort(),sha,LeshLib.JsonTimestamp]
-        client.send_message("/Response",list1)
+        ReportDeviceInfo(_value1,_value2)
       
     if(_commandType == "BREATHING_LIGHT"):   
         TestNum = int(_value1)
-   
+
+def ReportDeviceInfo(_ip,_port):
+    client = udp_client.SimpleUDPClient(_ip, int(_port))
+    path = "/home/pi/rpi-ws281x-python-and-osc"
+    repo = git.Repo(path, search_parent_directories=True)
+    sha = repo.head.object.hexsha
+    temp_list = [GetLocalIp(),LeshLib.MyOscPort,sha,LeshLib.JsonTimestamp]
+    client.send_message("/Response",temp_list)
+
 def job():  # gamma function?
   global TestNum
   while True:
@@ -193,18 +195,10 @@ def InitWsDevice():
     t.start()
 
 if __name__ == "__main__":
-    myLocalIP = GetLocalIp()
-    myLocalOscPort = GetLocalOscPort()
-
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip",default=myLocalIP, help="The ip to listen on.")
-    parser.add_argument("--port",type=int, default=myLocalOscPort, help="The port to listen on.")
-    args = parser.parse_args()
-
-    testaaa = []
-    print(testaaa)
-    testaaa = [0 for v in range(0, 5)] 
-    print(testaaa)
+    parser.add_argument("--ip",default="127.0.0.1", help="Master IP")
+    parser.add_argument("--port",type=int, default=2346, help="Master port")
+    Master_args = parser.parse_args()
 
     # Initial
     LeshLib.init_global_var()
@@ -218,7 +212,12 @@ if __name__ == "__main__":
     dispatcher = dispatcher.Dispatcher()
     dispatcher.map("/MatrixVelocity", handler_MatrixVelocity,"PrintValue")
     dispatcher.map("/Instruction", handler_Instruction,"test1","test2")
-    server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)
+    server = osc_server.ThreadingOSCUDPServer((GetLocalIp(),LeshLib.MyOscPort), dispatcher)
     print("OSC Serving on {}".format(server.server_address))
+    
+    # Reply to master
+    ReportDeviceInfo(Master_args.ip,Master_args.port)
     server.serve_forever()
+    
+    
 

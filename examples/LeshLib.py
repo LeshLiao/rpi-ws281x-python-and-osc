@@ -19,6 +19,8 @@ def init_global_var():
     DeviceConfigList = []
     
     global JsonTimestamp
+    
+    global MyOscPort
 
 a = [[0, 0, 0],
      [33, 33, 33],
