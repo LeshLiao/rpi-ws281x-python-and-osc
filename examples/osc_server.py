@@ -206,7 +206,7 @@ if __name__ == "__main__":
         InitWsDevice()
         InitDmxDevice()
     else:
-        print("No match device setting in Json file:"+myLocalIP)
+        print("No match device setting in Json file:"+GetLocalIp())
     
     # OSC Server
     dispatcher = dispatcher.Dispatcher()

@@ -21,6 +21,7 @@ def init_global_var():
     global JsonTimestamp
     
     global MyOscPort
+    MyOscPort = 2346
 
 a = [[0, 0, 0],
      [33, 33, 33],
