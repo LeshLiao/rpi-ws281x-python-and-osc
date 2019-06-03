@@ -1,7 +1,7 @@
 {
   "ProjectName": "Light Project Test",
   "FileVersion": "00.00.01",
-  "Timestamp": "1557733306",
+  "Timestamp": "1557733307",
   "MyStations": [
     {
       "StationID": 0,
@@ -24,7 +24,7 @@
     {
       "StationID": 1,
       "Name": "Led Matrix pad",
-      "IP": "192.168.1.102",
+      "IP": "192.168.1.100",
       "Port": 2346,
       "Titles":"Input:[Note,Tag],OutputParam:[Begin,End]",
 	  "Devices":[
