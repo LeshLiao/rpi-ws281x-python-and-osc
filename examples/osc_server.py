@@ -120,7 +120,7 @@ def handler_MatrixVelocity(unused_addr, args,VelocityString):
         LightWS(_velocityList)
     if (LeshLib.IsDmxAvailible and LeshLib.IsDmxDataExist):
         LightDMX(_velocityList)
-    if (True):
+    if (LeshLib.IsElAvailible):
         LightEL(_velocityList)
 
 def WipeAllDmxLight(colorNum):
@@ -143,14 +143,18 @@ def InitElDevice():
     if(ConfigDataExist):
         print("Initail EL Device...")
         print("loading "+_paramData[0])
-        board = pyfirmata.Arduino(_paramData[0])
         
-        LeshLib.ElDevice = [None]*(int(_paramData[2])+1)
-        for pin_num in range(int(_paramData[1]),int(_paramData[2])):
-            pin_status = "d:"+ str(pin_num) + ":o"
-            #print(pin_status)
-            LeshLib.ElDevice[pin_num] = board.get_pin(pin_status)
-
+        try:
+            board = pyfirmata.Arduino(_paramData[0])
+            LeshLib.IsElAvailible = True
+            LeshLib.ElDevice = [None]*(int(_paramData[2])+1)
+            for pin_num in range(int(_paramData[1]),int(_paramData[2])):
+                pin_status = "d:"+ str(pin_num) + ":o"
+                #print(pin_status)
+                LeshLib.ElDevice[pin_num] = board.get_pin(pin_status)
+        except:
+            LeshLib.IsElAvailible = False
+            print("[Warning]:EL Wire USB Device Error...")
 
 
 def InitDmxDevice():
@@ -166,11 +170,11 @@ def InitDmxDevice():
         print("Initail DMX Device...")
         # Channel value list for channels 1-512
         cv = [0 for v in range(0, 512)]
-        print("Opening DMX controller...")
+        #print("Opening DMX controller...")
         # This will automagically find a single Anyma-type USB DMX controller
         dev.open()
         # For informational purpose, display what we know about the DMX controller
-        print(dev.Device)
+        #print(dev.Device)
         
         global DmxBuffer
         DmxBuffer = [0 for v in range(0, LeshLib.DmxMaxChannel)]
@@ -200,7 +204,7 @@ def InitDmxDevice():
             
         except:
             LeshLib.IsDmxAvailible = False
-            print("DMX Warning:DMX USB Device Error...")
+            print("[Warning]:DMX USB Device Error...")
 
 def InitWsDevice():
     _paramData = []

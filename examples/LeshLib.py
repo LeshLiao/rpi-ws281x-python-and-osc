@@ -12,6 +12,9 @@ def init_global_var():
     global IsDmxAvailible
     IsDmxAvailible = False
     
+    global IsElAvailible
+    IsElAvailible = False
+    
     global IsDmxDataExist
     IsDmxDataExist = False
     

@@ -1,7 +1,7 @@
 {
   "ProjectName": "Light Project - Mini Test 20190517",
   "FileVersion": "00.00.01",
-  "Timestamp": "1558080741",
+  "Timestamp": "1558080743",
   "MyStations": [
 	{
       "StationID": 0,
@@ -11,7 +11,8 @@
       "Titles":"Input:[Note,Tag],WS281X OutputParam:[Begin,End] Input:[Note,Tag],DMX OutputParam:[BeginChannel,MaxChannel,Dimmer,Red,Green,Blue]",
 	  "Devices":[
 		{"Type":"WS281X","Config":["300","18","800000","10","0","128","0","0x00081000"]},
-		{"Type":"DMX","Config":["0","64","0"]}
+		{"Type":"DMX","Config":["0","64","0"]},
+		{"Type":"EL","Config":["/dev/ttyUSB0","2","9"]}
 	  ],
 	  "Rules": [
         {"Tag":0,"Input":64,"OutputType":"WS281X","OutputParam":[0,3]},
@@ -32,7 +33,10 @@
         {"Tag":15,"Input":61,"OutputType":"WS281X","OutputParam":[66,69]},
         {"Tag":16,"Input":65,"OutputType":"WS281X","OutputParam":[69,72]},
         {"Tag":17,"Input":36,"OutputType":"DMX","OutputParam":[1,8,4,5,6,7]},
-        {"Tag":18,"Input":48,"OutputType":"DMX","OutputParam":[9,7,1,2,3,4]}
+        {"Tag":18,"Input":48,"OutputType":"DMX","OutputParam":[9,7,1,2,3,4]},
+		{"Tag":19,"Input":36,"OutputType":"EL","OutputParam":[2]},
+		{"Tag":20,"Input":40,"OutputType":"EL","OutputParam":[3]},
+		{"Tag":21,"Input":44,"OutputType":"EL","OutputParam":[4]}
       ]
     }
     ,
