@@ -22,6 +22,9 @@ def init_global_var():
     
     global MyOscPort
     MyOscPort = 2346
+    
+    global ElDevice
+    ElDevice = []
 
 a = [[0, 0, 0],
      [33, 33, 33],

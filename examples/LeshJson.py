@@ -30,11 +30,28 @@ def ReadJsonFile():
     if(MatchDeviceIP):
         InitDataWs(CurrentRuleList)
         InitDataDmx(CurrentRuleList)
+        InitDataEL(CurrentRuleList)
         return True
     else:
-        LeshLib.JsonTimestamp += "(No IP match)"
+        LeshLib.JsonTimestamp += "(No matching IP)"
         return False
     
+    
+DataEl = []
+def InitDataEL(_ruleList): 
+    global DataEl   
+    DataEl.clear()  
+
+    for index, item in enumerate(_ruleList):
+        if(item['OutputType'] == "EL"):
+            DataEl.append([])
+            DataEl[-1].append(index)
+            for _param in item['OutputParam']:
+                DataEl[-1].append(_param)
+            
+            #print(str(index)+"item:"+item['OutputType']) 
+    print("EL:")
+    print(DataEl)
     
 DataWs = []
 def InitDataWs(_ruleList): 
