@@ -150,7 +150,7 @@ def InitElDevice():
             LeshLib.ElDevice = [None]*(int(_paramData[2])+1)
             for pin_num in range(int(_paramData[1]),int(_paramData[2])):
                 pin_status = "d:"+ str(pin_num) + ":o"
-                #print(pin_status)
+                print("    GPIO:"+pin_status)
                 LeshLib.ElDevice[pin_num] = board.get_pin(pin_status)
         except:
             LeshLib.IsElAvailible = False
