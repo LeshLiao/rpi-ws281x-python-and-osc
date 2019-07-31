@@ -29,29 +29,38 @@ DmxStartNum = 0
 DmxDimmer = 0
 TestNum = 255
 
-def LightEL(_velocityList):
+def LightEL(_RgbList):
     global DataEl  
     for _data in DataEl:
         index = _data[0]
         pin_num = _data[1]
-        if((int(_velocityList[index])) > 0 ):
+        baseIndex = index * 3
+        colorR =  int(_RgbList[baseIndex])
+        colorG =  int(_RgbList[baseIndex+1])
+        colorB =  int(_RgbList[baseIndex+2])
+        if((colorR > 0) or (colorG > 0) or (colorB > 0) ):
             LeshLib.ElDevice[pin_num].write(1)
         else:
             LeshLib.ElDevice[pin_num].write(0)
 
 
-def LightWS(_velocityList):
+def LightWS(_RgbList):
     global DataWs  
     for _data in DataWs:
         index = _data[0]
-        colorR, colorG, colorB = LeshLib.GetColorByVolume(int(_velocityList[index]))
+        #colorR, colorG, colorB = LeshLib.GetColorByVolume(int(_velocityList[index]))
+        baseIndex = index * 3
+        colorR = int(_RgbList[baseIndex])
+        colorG =  int(_RgbList[baseIndex+1])
+        colorB =  int(_RgbList[baseIndex+2])
+        
         for j in range(_data[1],_data[2]):
             #print(str(j)+',')
             strip.setPixelColor(j,Color(colorR,colorG,colorB))
         #print('|')
     strip.show()
 
-def LightDMX(_velocityList):
+def LightDMX(_RgbList):
     global DataDmx  
     global DmxBuffer
     global DmxStartNum
@@ -60,7 +69,11 @@ def LightDMX(_velocityList):
     _dmxDimmer = DmxDimmer
     for _data in DataDmx:
         index = _data[0]
-        colorR, colorG, colorB = LeshLib.GetColorByVolume(int(_velocityList[index]))
+        #colorR, colorG, colorB = LeshLib.GetColorByVolume(int(_velocityList[index]))
+        baseIndex = index * 3
+        colorR =  int(_RgbList[baseIndex])
+        colorG =  int(_RgbList[baseIndex+1])
+        colorB =  int(_RgbList[baseIndex+2])
         _dmxIndex = _data[1] + _data[3] - 2  # dimmer
         DmxBuffer[_dmxIndex] = _dmxDimmer
         _dmxIndex = _data[1] + _data[4] - 2  # red
@@ -123,13 +136,16 @@ def handler_MatrixVelocity(unused_addr, args,VelocityString):
     if (LeshLib.IsElAvailible):
         LightEL(_velocityList)
 
-def WipeAllDmxLight(colorNum):
+def WipeAllDmxLight(colorR,colorG,colorB):
     global DataDmx  
-    DmxTestList = [0 for x in range(LeshLib.RuleListSize)]
+    DmxTestRgbList = [0 for x in range(LeshLib.RuleListSize*3)]
     for _data in DataDmx:
         index = _data[0]
-        DmxTestList[index] = colorNum
-    LightDMX(DmxTestList)
+        baseIndex = index *3
+        DmxTestRgbList[baseIndex] = colorR
+        DmxTestRgbList[baseIndex+1] = colorG
+        DmxTestRgbList[baseIndex+2] = colorB
+    LightDMX(DmxTestRgbList)
 
 def InitElDevice():
     _paramData = []
@@ -158,6 +174,7 @@ def InitElDevice():
 
 
 def InitDmxDevice():
+    print("Opening DMX(0)")
     _paramData = []
     ConfigDataExist = False
     for index, item in enumerate(LeshLib.DeviceConfigList):
@@ -165,17 +182,18 @@ def InitDmxDevice():
             _paramData = item['Config']
             ConfigDataExist = True
             break
-
+    print("Opening DMX(1)")
     if(ConfigDataExist):
         print("Initail DMX Device...")
         # Channel value list for channels 1-512
         cv = [0 for v in range(0, 512)]
+        print("Opening DMX(2)")
         #print("Opening DMX controller...")
         # This will automagically find a single Anyma-type USB DMX controller
         dev.open()
         # For informational purpose, display what we know about the DMX controller
         #print(dev.Device)
-        
+        print("Opening DMX(3)")
         global DmxBuffer
         DmxBuffer = [0 for v in range(0, LeshLib.DmxMaxChannel)]
         
@@ -190,17 +208,18 @@ def InitDmxDevice():
             cv = [0 for v in range(0, 512)]
             dev.send_multi_value(1, cv)
             LeshLib.IsDmxAvailible = True
-            
-            WipeAllDmxLight(3)  #W
+            print("Opening DMX(4)")
+            WipeAllDmxLight(255,255,255)  #W
             time.sleep(0.5)
-            WipeAllDmxLight(6)  #R
+            WipeAllDmxLight(255,0,0)  #R
             time.sleep(0.5)
-            WipeAllDmxLight(21) #G
+            WipeAllDmxLight(0,255,0) #G
             time.sleep(0.5)
-            WipeAllDmxLight(45) #B
+            WipeAllDmxLight(0,0,255) #B
             time.sleep(0.5)
-            WipeAllDmxLight(0)  #0
+            WipeAllDmxLight(0,0,0)  #0
             time.sleep(0.5)
+            print("Opening DMX(5)")
             
         except:
             LeshLib.IsDmxAvailible = False
