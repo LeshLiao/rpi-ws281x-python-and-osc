@@ -98,7 +98,13 @@ def handler_Instruction(_unusedAddr, args,_commandType,_value1,_value2):
     print("_value2="+_value2)
 
     if(_commandType == "RELOAD_JSON"):
-        ReadJsonFile()
+        if(ReadJsonFile()):
+            InitWsDevice()
+            InitDmxDevice()
+            InitElDevice()
+        else:
+            print("No match device setting in Json file:"+GetLocalIp())
+        ReportDeviceInfo(Master_args.ip,Master_args.port)
         print("RELOAD_JSON")
         
     if(_commandType == "CHECK_OSC"):
