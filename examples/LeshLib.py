@@ -18,6 +18,12 @@ def init_global_var():
     global IsDmxDataExist
     IsDmxDataExist = False
     
+    global IsWsCh00Exist
+    IsWsCh00Exist = False
+    
+    global IsWsCh01Exist
+    IsWsCh01Exist = False
+    
     global DeviceConfigList
     DeviceConfigList = []
     

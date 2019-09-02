@@ -5,6 +5,7 @@ received packets.
 test pull latest version.4040 test....
 """
 import argparse
+import time
 import math
 import git
 import datetime
@@ -17,7 +18,8 @@ from pythonosc import dispatcher
 from pythonosc import osc_server
 from pythonosc import udp_client
 
-from strandtest import *
+#from strandtest import *
+from rpi_ws281x import *
 from LeshJson import *
 from pyudmx import pyudmx
 from time import sleep
@@ -28,6 +30,9 @@ DmxBuffer = []
 DmxStartNum = 0
 DmxDimmer = 0
 TestNum = 255
+_velocityList = []
+WsCh0_ThreadFlag = False
+WsCh1_ThreadFlag = False
 
 def LightEL(_RgbList):
     global DataEl  
@@ -43,22 +48,17 @@ def LightEL(_RgbList):
         else:
             LeshLib.ElDevice[pin_num].write(0)
 
-
 def LightWS(_RgbList):
-    global DataWs  
-    for _data in DataWs:
+    global DataWsCh0  
+    for _data in DataWsCh0:
         index = _data[0]
-        #colorR, colorG, colorB = LeshLib.GetColorByVolume(int(_velocityList[index]))
         baseIndex = index * 3
         colorR = int(_RgbList[baseIndex])
         colorG =  int(_RgbList[baseIndex+1])
         colorB =  int(_RgbList[baseIndex+2])
-        
         for j in range(_data[1],_data[2]):
-            #print(str(j)+',')
-            strip.setPixelColor(j,Color(colorR,colorG,colorB))
-        #print('|')
-    strip.show()
+            stripCh0.setPixelColor(j,Color(colorR,colorG,colorB))
+    stripCh0.show()
 
 def LightDMX(_RgbList):
     global DataDmx  
@@ -69,7 +69,6 @@ def LightDMX(_RgbList):
     _dmxDimmer = DmxDimmer
     for _data in DataDmx:
         index = _data[0]
-        #colorR, colorG, colorB = LeshLib.GetColorByVolume(int(_velocityList[index]))
         baseIndex = index * 3
         colorR =  int(_RgbList[baseIndex])
         colorG =  int(_RgbList[baseIndex+1])
@@ -123,20 +122,67 @@ def ReportDeviceInfo(_ip,_port):
 
 def job():  # gamma function?
   global TestNum
+  global stripCh0
   while True:
     if(TestNum >= 0):
         if TestNum < 4: TestNum = 0
-        for j in range(strip.numPixels()):
-            strip.setPixelColor(j,Color(TestNum,TestNum,TestNum))
-        strip.show()
+        for j in range(stripCh0.numPixels()):
+            stripCh0.setPixelColor(j,Color(TestNum,TestNum,TestNum))
+        stripCh0.show()
         TestNum = TestNum - 4
     time.sleep(0.01)
+    
+def thread_Ws_Ch0():
+  global DataWsCh0 
+  global _velocityList
+  global stripCh0
+  global WsCh0_ThreadFlag
+  while True:
+    if(WsCh0_ThreadFlag):
+        WsCh0_ThreadFlag = False
+        _RgbList = _velocityList
+        for _data in DataWsCh0:
+            index = _data[0]
+            baseIndex = index * 3
+            colorR = int(_RgbList[baseIndex])
+            colorG =  int(_RgbList[baseIndex+1])
+            colorB =  int(_RgbList[baseIndex+2])
+            for j in range(_data[1],_data[2]):
+                stripCh0.setPixelColor(j,Color(colorR,colorG,colorB))
+        stripCh0.show()
+    time.sleep(0.005)
+    
+def thread_Ws_Ch1():
+  global DataWsCh1 
+  global _velocityList
+  global stripCh1
+  global WsCh1_ThreadFlag
+  while True:
+    if(WsCh1_ThreadFlag):
+        WsCh1_ThreadFlag = False
+        _RgbList = _velocityList
+        for _data in DataWsCh1:
+            index = _data[0]
+            baseIndex = index * 3
+            colorR = int(_RgbList[baseIndex])
+            colorG =  int(_RgbList[baseIndex+1])
+            colorB =  int(_RgbList[baseIndex+2])
+            for j in range(_data[1],_data[2]):
+                stripCh1.setPixelColor(j,Color(colorR,colorG,colorB))
+        stripCh1.show()
+    time.sleep(0.005)
 
 def handler_MatrixVelocity(unused_addr, args,VelocityString):
-    #TODO split to 2 thread?
+    global _velocityList
+    global WsCh0_ThreadFlag
+    global WsCh1_ThreadFlag
     _velocityList = VelocityString.split(',')
-    if (True):
-        LightWS(_velocityList)
+    #if (LeshLib.IsWsCh00Exist):
+    #    LightWS(_velocityList)
+    if (LeshLib.IsWsCh00Exist):
+        WsCh0_ThreadFlag = True
+    if (LeshLib.IsWsCh01Exist):
+        WsCh1_ThreadFlag = True
     if (LeshLib.IsDmxAvailible and LeshLib.IsDmxDataExist):
         LightDMX(_velocityList)
     if (LeshLib.IsElAvailible):
@@ -177,7 +223,6 @@ def InitElDevice():
         except:
             LeshLib.IsElAvailible = False
             print("[Warning]:EL Wire USB Device Error...")
-
 
 def InitDmxDevice():
     print("Opening DMX(0)")
@@ -232,37 +277,84 @@ def InitDmxDevice():
             print("[Warning]:DMX USB Device Error...")
 
 def InitWsDevice():
-    _paramData = []
-    ConfigDataExist = False
+    global stripCh0
+    global stripCh1
+    _paramDataCh0 = []
+    _paramDataCh1 = []
+    WsConfigCh0Exist = False
+    WsConfigCh1Exist = False
     for index, item in enumerate(LeshLib.DeviceConfigList):
-        if(item['Type'] == "WS281X"):
-            _paramData = item['Config']
-            ConfigDataExist = True
-            break
+        if(item['Type'] == "WS281X_Ch0"):
+            _paramDataCh0 = item['Config']
+            WsConfigCh0Exist = True
+        if(item['Type'] == "WS281X_Ch1"):
+            _paramDataCh1 = item['Config']
+            WsConfigCh1Exist = True
     
-    if(ConfigDataExist):
-        print("Initail WS Device...")
+    if(WsConfigCh0Exist and LeshLib.IsWsCh00Exist):
+        print("Initail WS Channel 0 Device...")
         booleanInvert = False
-        if _paramData[4] == "1":
+        if _paramDataCh0[4] == "1":
             booleanInvert = True
-            
-        global strip
-        strip = Adafruit_NeoPixel(int(_paramData[0]), int(_paramData[1]), int(_paramData[2]), int(_paramData[3]), booleanInvert, int(_paramData[5]), int(_paramData[6]),int(_paramData[7], 0))
-        strip.begin()
+        
+        stripCh0 = Adafruit_NeoPixel(int(_paramDataCh0[0]), int(_paramDataCh0[1]), int(_paramDataCh0[2]), int(_paramDataCh0[3]), booleanInvert, int(_paramDataCh0[5]), int(_paramDataCh0[6]),int(_paramDataCh0[7], 0))
+        stripCh0.begin()
+        #Led Lighting Test
+        colorWipeTest(stripCh0, Color(255, 255, 255))  # Test Red wipe
+        sleep(0.5)
+        ChangeAllWipe(stripCh0, Color(255, 0, 0))
+        sleep(0.5)
+        ChangeAllWipe(stripCh0, Color(0, 255, 0))
+        sleep(0.5)
+        ChangeAllWipe(stripCh0, Color(0, 0, 255))
+        sleep(0.5)
+        ChangeAllWipe(stripCh0, Color(0, 0, 0))
+        sleep(0.5)
+        #t = threading.Thread(target = job)
+        #t.setDaemon(True)
+        #t.start()
+        threadCh0 = threading.Thread(target = thread_Ws_Ch0)
+        threadCh0.setDaemon(True)
+        threadCh0.start()
+        print("Thread WS chanel 0 start...")
+    
+    if(WsConfigCh1Exist and LeshLib.IsWsCh01Exist):
+        print("Initail WS Channel 1...")
+        booleanInvert = False
+        if _paramDataCh1[4] == "1":
+            booleanInvert = True
+        
+        stripCh1 = Adafruit_NeoPixel(int(_paramDataCh1[0]), int(_paramDataCh1[1]), int(_paramDataCh1[2]), int(_paramDataCh1[3]), booleanInvert, int(_paramDataCh1[5]), int(_paramDataCh1[6]),int(_paramDataCh1[7], 0))
+        stripCh1.begin()
         
         #Led Lighting Test
-        colorWipe(strip, Color(255, 255, 255))  # Test Red wipe
+        colorWipeTest(stripCh1, Color(255, 255, 255))  # Test Red wipe
         sleep(0.5)
-        ChangeAllColorWipe(strip, Color(255, 0, 0))
+        ChangeAllWipe(stripCh1, Color(255, 0, 0))
         sleep(0.5)
-        ChangeAllColorWipe(strip, Color(0, 255, 0))
+        ChangeAllWipe(stripCh1, Color(0, 255, 0))
         sleep(0.5)
-        ChangeAllColorWipe(strip, Color(0, 0, 255))
+        ChangeAllWipe(stripCh1, Color(0, 0, 255))
         sleep(0.5)
-        
-        t = threading.Thread(target = job)
-        t.setDaemon(True)
-        t.start()
+        ChangeAllWipe(stripCh1, Color(0, 0, 0))
+        sleep(0.5)
+    
+        threadCh1 = threading.Thread(target = thread_Ws_Ch1)
+        threadCh1.setDaemon(True)
+        threadCh1.start()
+        print("Thread WS chanel 1 start...")
+
+def ChangeAllWipe(_strip, color):
+    for i in range(_strip.numPixels()):
+        _strip.setPixelColor(i, color)
+    _strip.show()
+
+# Define functions which animate LEDs in various ways.
+def colorWipeTest(_strip, color, wait_ms=2):
+    """Wipe color across display a pixel at a time."""
+    for i in range(_strip.numPixels()):
+        _strip.setPixelColor(i, color)
+        _strip.show()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -289,6 +381,5 @@ if __name__ == "__main__":
     # Reply status to master
     ReportDeviceInfo(Master_args.ip,Master_args.port)
     server.serve_forever()
-    
-    
+
 

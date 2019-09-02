@@ -53,21 +53,34 @@ def InitDataEL(_ruleList):
     print("EL:")
     print(DataEl)
     
-DataWs = []
+DataWsCh0 = []
+DataWsCh1 = []
 def InitDataWs(_ruleList): 
-    global DataWs   
-    DataWs.clear()  
+    global DataWsCh0   
+    DataWsCh0.clear()  
 
     for index, item in enumerate(_ruleList):
-        if(item['OutputType'] == "WS281X"):
-            DataWs.append([])
-            DataWs[-1].append(index)
+        if(item['OutputType'] == "WS281X_Ch0"):
+            LeshLib.IsWsCh00Exist = True
+            DataWsCh0.append([])
+            DataWsCh0[-1].append(index)
             for _param in item['OutputParam']:
-                DataWs[-1].append(_param)
+                DataWsCh0[-1].append(_param)
             
             #print(str(index)+"item:"+item['OutputType']) 
-    print("WS281X:")
-    print(DataWs) 
+    print("WS281X_Ch0:")
+    print(DataWsCh0) 
+    
+    global DataWsCh1   
+    DataWsCh1.clear()  
+
+    for index, item in enumerate(_ruleList):
+        if(item['OutputType'] == "WS281X_Ch1"):
+            LeshLib.IsWsCh01Exist = True
+            DataWsCh1.append([])
+            DataWsCh1[-1].append(index)
+            for _param in item['OutputParam']:
+                DataWsCh1[-1].append(_param)
          
         
 DataDmx = [] 
