@@ -10,6 +10,8 @@ import math
 import git
 import datetime
 import pyfirmata
+import vcgencmd
+import shutil
 
 import LeshLib
 import threading
@@ -117,7 +119,12 @@ def ReportDeviceInfo(_ip,_port):
     path = "/home/pi/rpi-ws281x-python-and-osc"
     repo = git.Repo(path, search_parent_directories=True)
     sha = repo.head.object.hexsha
-    temp_list = [GetLocalIp(),LeshLib.MyOscPort,sha,LeshLib.JsonTimestamp]
+    total, used, free = shutil.disk_usage("/")
+    _strTotal = "Total: %6.2f GB" % (total / (2**30))
+    _strUsed = "Used: %6.2f GB" % (used / (2**30))
+    CPUc=vcgencmd.measure_temp()
+    InformationStr = "CPU:"+str(CPUc)+",Hard Disk "+_strTotal+" "+_strUsed
+    temp_list = [GetLocalIp(),LeshLib.MyOscPort,sha,LeshLib.JsonTimestamp,InformationStr]
     client.send_message("/Response",temp_list)
 
 def job():  # gamma function?
