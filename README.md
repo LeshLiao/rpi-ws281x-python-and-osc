@@ -4,6 +4,7 @@ This is the official Python distribution of the ws281x library: http://github.co
 
 ### Control LED string and DMX lights by OSC protocol
 ###### Language
+- C/C++
 - python
 
 ###### Library
